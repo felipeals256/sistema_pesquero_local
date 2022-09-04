@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.css">
+    
+    
+    <link href="./src/css/dashboard.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="./src/css/datatable.css">
+    <link href="./src/css/select2.css" rel="stylesheet">
+
+
+    
+    
+    
+    <script>
+      window.jQuery = window.$ = window.jquery = require('jquery');
+      window.dt = require('datatables.net')();
+      require('select2')(jQuery);
+
+    </script>
+
+    
+
+    <title>Sistema Pesquero</title>
+
+
+
+</head>
+<body style="background: #E0E4E6 ;">
+  
+    
+    <div class="container-fluid" >
+      
+      <div class="row">
+          <div class="d-flex justify-content-center mt-5">
+              <div class="col-12 col-sm-3">
+
+                <div class="card">
+                  <div class="card-header text-center">
+                    SISTEMA PESQUERO
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title text-center">INGRESE SUS CREDENCIALES</h5>
+                    
+                    <div class="p-3">
+
+                    <div class="mb-3">
+                      <label class="form-label">USUARIO</label>
+                      <input id="user" type="text" class="form form-control col-12" value="">
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label">CONTRASEÑA</label>
+                      <input id="pass" type="password" class="form form-control col-12" value="">
+                    </div>
+
+                 
+                     <p style="display: none;" class="text-center text-danger info"></p> 
+               
+                   
+                    <div class="d-flex justify-content-center">
+                      <button type="button" class="btn btn-primary" onclick="entrar()">Entrar</button>
+                    </div>
+             
+                  </div>
+                </div>
+
+               
+                 
+              </div>
+          </div>
+       
+        
+      </div>
+
+     
+
+    </div>
+
+
+
+    <script>
+        const {ipcRenderer} = require('electron')
+        function entrar(){
+            
+            $(".error").remove()
+            $(".text-danger").hide()
+
+            let argumentos={
+                user:$("#user").val().trim(),
+                pass:$("#pass").val().trim()
+            }
+            //console.log(argumentos)
+            if(!argumentos.user || argumentos.user.trim().length == 0){
+                $("#user").after('<p class="text-danger error">Este campo es obligatorio</p>')
+                return
+            }
+
+            if(!argumentos.pass || argumentos.pass.trim().length == 0){
+                $("#pass").after('<p class="text-danger error">Este campo es obligatorio</p>')
+                return
+            }
+
+            ipcRenderer.invoke('login', argumentos).then((result) => {
+             
+                if(result==false){
+                    $(".text-danger").show()
+                    $(".text-danger").text("Usuario o contraseña incorrectos, prueba denuevo.")
+                }
+            })
+        }
+
+    </script>
+    
+
+
+
+
+    
+   
+     
+</body>
+</html>

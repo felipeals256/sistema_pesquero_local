@@ -1,0 +1,318 @@
+<div class="row d-flex justify-content-center">
+    <div class="col-10">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between">
+                    REPORTES
+                    <button class="btn btn-sm btn-info" onclick="subir()" >Subir</button>
+                </div>
+              
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table viaje_table">
+                        <thead>
+                            <th>ID</th>
+                            <th>Tripcode</th>
+                            <th>Fecha</th>
+                            <th>Subsistema</th>
+                            <th>Bote</th>
+                            <th>Temporada</th>
+                            <th>Estado Envio</th>
+                        </thead>
+                        <tbody id="tbody">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-10 mt-4 mb-5" style="display: block;" id="reporte_detalle">
+        
+           
+        
+
+    </div>
+
+</div>
+
+<script>
+const {newDate}  = require('../env/utility')
+
+function subir(){
+
+    if(!confirm("¿Está seguro de que quiere enviar los datos?\nEl máximo de envío es de 300 registros por subida"))return
+
+    ipcRenderer.invoke('pendientes:viaje', null).then((viajes) => {
+    
+        if(viajes.length==0){
+            alert("Sin registros pendientes")
+            return
+        }
+
+        data={"datos":JSON.parse(viajes)}
+
+        var settings = {
+            "url"  :  process.env.API_POST_VIAJE,
+            "method": "POST",
+            "timeout": 0,
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "data": JSON.stringify(data)
+        };
+        console.log(settings)
+      
+       
+        $.ajax(settings).done(function (response) {
+            ipcRenderer.invoke('historico_api:viaje', [{
+                api:settings["url"],
+                response:JSON.stringify(response),
+                success:true,
+                codigo:1,
+                created_at:newDate()
+            }]).then((resp) => {});
+
+            ipcRenderer.invoke('enviado:viaje', response.save).then((resp) => {
+                observaciones=" sin observaciones"
+                if(response.errores.length>0){
+                    observaciones="\n Hay algunas observaciones"
+                    for (let e = 0; e < response.errores.length; e++) {
+                        observaciones += "\n-"+response.errores[e];
+                        
+                    }
+                }
+                alert(response.save.length+" registros sincronizados "+observaciones);
+                //solo actualizo si no hay error
+                if(observaciones==" sin observaciones")location.reload();
+                
+            })
+
+        }).fail(function(response){
+            ipcRenderer.invoke('historico_api:viaje', [{
+                api:settings["url"],
+                response:JSON.stringify(response),
+                success:false,
+                codigo:1,
+                created_at:newDate()
+            }]).then((resp) => {});
+            alert("No se puedo establecer comunicación con el servidor web");
+        });
+       
+        
+    })
+   
+    
+}
+
+
+
+function getHTML(viaje){
+    html= `
+    <div class="card" >
+        <div class="card-header">
+              DETALLE DEL VIAJE #${(viaje.tripcode?viaje.tripcode:'')}
+            </div>
+            <div class="card-body">
+               
+                <div class="d-flex justify-content-between mb-4">
+                    <h5 class="mt-4 text-center"><b>Detalle</b></h5>
+                    `;
+                    if(!viaje.enviado)html+=`
+                    <div>
+                        <a class="btn btn-secondary" id="btn_eliminar" onclick="eliminar(${(viaje.id?viaje.id:'')})" >Eliminar</a>
+                        <a class="btn btn-info" id="btn_editar" href="./viajes/crear.html?viaje=${(viaje.id?viaje.id:'')}" >Editar</a>
+                    </div>`;
+                    html+=`
+                </div>
+                
+                <table style="width:100%">
+                    <tr>
+                        <td style="width:30%"><b>Declaración:</b></td>
+                        <td>${(viaje.declaracion?viaje.declaracion:'')}</td>
+                    </tr>
+                    <tr>
+                        <td style="width:30%"><b>Subsistema:</b></td>
+                        <td>${(viaje.subsistema?viaje.subsistema.descripcion:'')}</td>
+                    </tr>
+                    <tr>
+                        <td style="width:30%"><b>Bote:</b></td>
+                        <td> ${(viaje.bote?viaje.bote.nombre:'')}</td>
+                    </tr>
+                    <tr>
+                        <td style="width:30%"><b>Fecha:</b></td>
+                        <td>${(viaje.fecha?_fotmatearFecha(viaje.fecha):'')}</td>
+                    </tr>
+                    <tr>
+                        <td style="width:30%"><b>Temporada:</b></td>
+                        <td>${(viaje.temporada?viaje.temporada:'')}</td>
+                    </tr>
+                    <tr>
+                        <td style="width:30%"><b>Trampas en el agua:</b></td>
+                        <td>${(viaje.n_trampas_agua || viaje.n_trampas_agua==0?viaje.n_trampas_agua:'')}</td>
+                    </tr>
+                    <tr>
+                        <td style="width:30%"><b>Trampas visitadas:</b></td>
+                        <td>${(viaje.n_trampas_visitadas || viaje.n_trampas_visitadas==0?viaje.n_trampas_visitadas:'')}</td>
+                    </tr>
+                    <tr>
+                        <td style="width:30%"><b>Especie:</b></td>
+                        <td>${(viaje.especie?viaje.especie.nombre:'')}</td>
+                    </tr>
+                    <tr>
+                        <td style="width:30%"><b>Comentario:</b></td>
+                        <td>${(viaje.comentario?viaje.comentario:'')}</td>
+                    </tr>
+                    <tr>
+                        <td style="width:30%"><b>Estado del envío:</b></td>
+                        <td>${viaje.enviado?'Enviado el '+_fotmatearFecha(viaje.enviado_fecha):'Pendiente'}</td>
+                    </tr>
+                </table>
+
+                <h5 class="mt-4 text-center"><b>Trampas en el agua</b></h5>
+                <table class="table table-bordered ">
+                    <thead>
+                        <tr>
+                            <th scope="col">Sector</th>
+                            <th scope="col">Otro Sector</th>
+                            <th scope="col">Ventana de escape</th>
+                            <th scope="col">N° Comercial</th>
+                            <th scope="col">N° no Comercial</th>
+                            <th scope="col">Bycatch</th>
+                            <th scope="col">Cant. Bycatch</th>
+                            <th scope="col">Observación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    `;
+                    if(viaje.trampa_historico){
+                        for (let t = 0; t < viaje.trampa_historico.length; t++) {
+                            const trampa_historico = viaje.trampa_historico[t];
+                            html+=`
+                                <tr>
+                                    <td scope="row">${(trampa_historico.sector?trampa_historico.sector:'')}</td>
+                                    <td scope="row">${(trampa_historico.otro_sector?trampa_historico.otro_sector:'')}</td>
+                                    <td scope="row">${(trampa_historico.ventana_escape!=null?(trampa_historico.ventana_escape?'Si':'No'):'')}</td>
+                                    <td scope="row">${(trampa_historico.num_comercial || trampa_historico.num_comercial==0 ?trampa_historico.num_comercial:'')}</td>
+                                    <td scope="row">${(trampa_historico.num_no_comercial || trampa_historico.num_no_comercial==0?trampa_historico.num_no_comercial:'')}</td>
+                                    <td scope="row">${(trampa_historico.bycatch_id?trampa_historico.bycatch_nombre:'')}</td>
+                                    <td scope="row">${(trampa_historico.bycatch_cantidad || trampa_historico.bycatch_cantidad==0?trampa_historico.bycatch_cantidad:'')}</td>
+                                    <td scope="row">${(trampa_historico.observaciones?trampa_historico.observaciones:'')}</td>
+                                </tr>
+                            `
+                        }
+                    }
+                    
+                    html+=`
+                    </tbody>
+                </table>
+
+                <h5 class="mt-4 text-center"><b>Registro de Carnadas</b></h5>
+                <table class="table table-bordered ">
+                    <thead>
+                        <tr>
+                            <th>Carnada</th>
+                            <th>Unidad</th>
+                            <th>Volumen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    `;
+                    if(viaje.carnada_registro){
+                        for (let t = 0; t < viaje.carnada_registro.length; t++) {
+                            const carnada_registro = viaje.carnada_registro[t];
+                            html+=`
+                                <tr>
+                                    <td>${(carnada_registro.carnada_nombre?carnada_registro.carnada_codigo+" - "+carnada_registro.carnada_nombre:'')}</td>
+                                    <td>${(carnada_registro.unidad?carnada_registro.unidad:'')}</td>
+                                    <td>${(carnada_registro.volumen?carnada_registro.volumen:'')}</td>
+                                </tr>
+                            `
+                        }
+                    }
+                    
+                    html+=`
+                    </tbody>
+                </table>
+
+            </div>
+
+            
+
+        </div>
+    </div>
+    `;
+    return html;
+}
+
+const {ipcRenderer} = require('electron')
+
+    ipcRenderer.send('all:viaje')
+    
+    ipcRenderer.on('all:viaje:response',(e,args)=>{
+      const  data=JSON.parse(args)
+      //console.log(data)
+      for (let i = 0; i < data.length; i++) {
+
+        let tr="";
+        tr+="<tr class=\"hover\" onclick=\"seleccionarViaje(this,'"+_codificar(data[i])+"')\" >";
+        tr+="<td>"+data[i].id+"</td>";
+        tr+="<td>"+data[i].tripcode+"</td>";
+        tr+="<td>"+_fotmatearFecha(data[i].fecha)+"</td>";
+        tr+="<td>"+data[i].mt_subsistema_codigo+"-"+data[i].mt_subsistema_descripcion+"</td>";
+        tr+="<td>"+data[i].mt_bote_matricula+"-"+data[i].mt_bote_nombre+"</td>";
+        tr+="<td>"+data[i].temporada+"</td>";
+        tr+="<td>"+(data[i].enviado?'Enviado':'Pendiente')+"</td>";
+        tr+="</tr>";
+
+        $('#tbody').append($(tr))
+
+       
+      
+      }
+
+      $('.viaje_table').DataTable();
+      
+    })
+
+    function seleccionarViaje(elemento,viaje){
+        ipcRenderer.removeAllListeners()  
+        viaje=_decodificar(viaje)
+        
+
+
+        $('.hover').removeClass('active')
+        $(elemento).addClass('active')
+
+        ipcRenderer.send('all_info:viaje',viaje.id)   
+        ipcRenderer.on('all_info:viaje:response',(e,args)=>{
+            //console.log(JSON.parse(args))
+            $("#reporte_detalle").text("")
+            $("#reporte_detalle").append(getHTML(JSON.parse(args)))
+            $("#reporte_detalle").show()
+            _eventHref($("#btn_editar"))
+            $("#btn_editar").click(function(){
+                ipcRenderer.send('params',JSON.parse(args))
+            })
+        });
+        
+          
+
+
+        
+    }
+
+    function eliminar(id_viaje){
+        if(!confirm("Estas a punto de eliminar este registro!!\n¿Seguro que quieres continuar?"))return
+        ipcRenderer.invoke('eliminar:viaje', id_viaje).then((result) => {
+            if(result){
+                alert("Registro Eliminado")
+                location.reload();
+            }
+        })  
+
+    }
+</script>

@@ -1,0 +1,18 @@
+
+
+<div class="row d-flex justify-content-center">
+    <div class="card col-6">
+        <div class="card-body">
+             <p id="bienvenida">Bienvenido</p>
+            
+            
+
+        </div>
+      </div>
+</div>
+
+
+<script>
+    $("#bienvenida").text("Bienvenido "+_user.getNombreCompleto()+" "+(_user.getTipoUsuario()?" - "+_user.getTipoUsuario():"" ))
+ 
+</script>

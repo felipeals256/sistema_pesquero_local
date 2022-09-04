@@ -1,0 +1,89 @@
+<div class="row d-flex justify-content-center">
+    <div class="col-10">
+        <div class="card">
+
+            <!--Menu a compartir-->
+
+            <div class="card-header">
+              BOTES
+            </div>
+            <!--
+            <div class="mb-4">
+                <ul class="nav nav-tabs bg-primary " >
+                    <li class="nav-item ">
+                      <a class="nav-link text-white" aria-current="page" href="./bote/index.html">Lista</a>
+                    </li>
+                    <li class="nav-item text-white">
+                      <a class="nav-link text-white" href="./bote/asignar.html">Asignar</a>
+                    </li>
+                  </ul>
+            </div>
+            -->
+            <!--Fin menú a compartir-->
+
+
+            <div class="card-body">
+
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Bote</th>
+                    <th>Subsistema</th>
+                    <th>Vigencia</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody">
+                </tbody>
+              </table>
+
+            </div>
+        </div>
+
+    </div>
+    
+</div>
+
+
+
+<script>
+
+
+
+    const {ipcRenderer} = require('electron')
+  
+
+    const form = document.querySelector('#form') 
+    const subsistema = document.querySelector('#subsistema') 
+    
+    ipcRenderer.send('all:bote')
+    
+    ipcRenderer.on('all:bote:response',(e,args)=>{
+      const  data=JSON.parse(args)
+      //console.log(data)
+      //console.log(data)
+      for (let i = 0; i < data.length; i++) {
+
+        let tr="";
+        tr+="<tr>";
+        tr+="<td>"+data[i].bote_matricula+" - "+data[i].bote_nombre+"</td>";
+        tr+="<td>"+(data[i].subsistema_codigo?data[i].subsistema_codigo+" - "+data[i].subsistema_descripcion:'')+"</td>";
+        tr+="<td>"+(data[i].fecha_termino?_fotmatearFecha(data[i].fecha_termino):'')+"</td>";
+        tr+="</tr>";
+
+        $('#tbody').append($(tr))
+
+       
+      
+      }
+
+      $('.table').DataTable();
+      
+    })
+
+    
+    
+
+</script>
+
+
+

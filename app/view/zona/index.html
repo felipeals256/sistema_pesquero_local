@@ -1,0 +1,160 @@
+<div class="row d-flex justify-content-center">
+    <div class="col-10 mb-4">
+        <div class="card">
+
+            <!--Menu a compartir-->
+
+            <div class="card-header">
+              ZONA
+            </div>
+            <!--
+            <div class="mb-4">
+                <ul class="nav nav-tabs bg-primary " >
+                    <li class="nav-item ">
+                      <a class="nav-link text-white" aria-current="page" href="./bote/index.html">Lista</a>
+                    </li>
+                    <li class="nav-item text-white">
+                      <a class="nav-link text-white" href="./bote/asignar.html">Asignar</a>
+                    </li>
+                  </ul>
+            </div>
+            -->
+            <!--Fin menú a compartir-->
+
+
+            <div class="card-body">
+
+              <table class="table table-bordered zona-table">
+                <thead>
+                  <tr>
+                    <th>Código</th>
+                    <th>Descripción</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody">
+                </tbody>
+              </table>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="col-10">
+      <div class="card sectores" style="display:none">
+
+
+          <div class="card-header" id="sector-titulo">
+            SECTORES DE LA ZONA 
+          </div>
+
+
+          <div class="card-body" id="sector-body">
+
+            
+
+          </div>
+      </div>
+
+  </div>
+    
+</div>
+
+
+
+<script>
+
+  function htmtabla(){
+    return `
+          <table class="table table-bordered sector-table">
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Descripción</th>
+                </tr>
+              </thead>
+              <tbody id="sector-contenido">
+              </tbody>
+          </table>
+    `;
+
+  }
+
+    const {ipcRenderer} = require('electron')
+  
+
+    const form = document.querySelector('#form') 
+    const subsistema = document.querySelector('#subsistema') 
+    
+    ipcRenderer.send('all:zona')
+    
+    ipcRenderer.on('all:zona:response',(e,args)=>{
+      const  data=JSON.parse(args)
+      //console.log(data)
+      //console.log(data)
+      for (let i = 0; i < data.length; i++) {
+
+        let tr="";
+        tr+="<tr class=\"hover\" onclick=\"seleccionarZona(this,'"+_codificar(data[i])+"')\" >";
+        tr+="<td>"+data[i].codigo+"</td>";
+        tr+="<td>"+data[i].descripcion+"</td>";
+        tr+="</tr>";
+
+        $('#tbody').append($(tr))
+
+       
+      
+      }
+
+      $('.zona-table').DataTable();
+      
+    })
+
+    
+    
+    function seleccionarZona(elemento,zona){
+      zona = _decodificar(zona)
+      $('.hover').removeClass('active')
+      $(elemento).addClass('active')
+
+
+      $("#sector-body").text("")
+      $("#sector-body").append(htmtabla());
+
+      $(".sectores").show();
+      $("#sector-titulo").text("SECTORES DE LA ZONA "+zona.descripcion)
+
+
+      
+      ipcRenderer.send('sectorByZona',zona.codigo)
+      ipcRenderer.on('sectorByZona:response',(e,args)=>{
+      const  data=JSON.parse(args)
+      //console.log(data)
+      //console.log(data)
+      for (let i = 0; i < data.length; i++) {
+
+        let tr="";
+        tr+="<tr class=\"hover\" onclick=\"seleccionarZona(this,'"+_codificar(data[i])+"')\" >";
+        tr+="<td>"+data[i].codigo+"</td>";
+        tr+="<td>"+data[i].descripcion+"</td>";
+        tr+="</tr>";
+
+        $('#sector-contenido').append($(tr))
+
+       
+      
+      }
+      ipcRenderer.removeAllListeners()
+
+      $('.sector-table').DataTable();
+      
+    })
+
+
+    }
+
+</script>
+
+
+

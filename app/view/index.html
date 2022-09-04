@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,
+    initial-scale=1.0">
+    <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.css">
+    
+    
+    <link href="./src/css/dashboard.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="./src/css/datatable.css">
+    <link href="./src/css/select2.css" rel="stylesheet">
+
+
+    
+    
+    
+    <script>
+      window.jQuery = window.$ = window.jquery = require('jquery');
+      window.dt = require('datatables.net')();
+      require('select2')(jQuery);
+
+      User = require("../model/user");
+      const _user =new User(JSON.parse(localStorage.getItem("user")).id,
+                            JSON.parse(localStorage.getItem("user")).is_superuser,
+                             JSON.parse(localStorage.getItem("user")).username,
+                             JSON.parse(localStorage.getItem("user")).first_name,
+                             JSON.parse(localStorage.getItem("user")).last_name,
+                             JSON.parse(localStorage.getItem("user")).email,
+                             JSON.parse(localStorage.getItem("user")).pass_local,
+                             JSON.parse(localStorage.getItem("user")).user_type,
+                             JSON.parse(localStorage.getItem("user")).is_active,
+                             
+                             JSON.parse(localStorage.getItem("user")).user_type_codigo,
+                             JSON.parse(localStorage.getItem("user")).user_type_nombre
+                             )
+  
+    </script>
+
+    
+
+    <title>Sistema Pesquero</title>
+
+
+
+</head>
+<!--<body  style="background-image: url('./src/img/fondo.png');background-repeat: no-repeat;background-size: cover;">-->
+<body style="background: #E0E4E6 ;">
+    <header class="navbar navbar-dark bg-primary sticky-top  flex-md-nowrap p-0 shadow" >
+      <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3">BITACORALOC</a>
+      <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="  w-100"></div>
+      <!--<input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">-->
+      <div class="navbar-nav">
+        <div class="nav-item text-nowrap">
+          <!--<a class="nav-link px-3" href="#">Salir</a>-->
+        </div>
+      </div>
+    </header>
+    
+    <div class="container-fluid" style="padding-left: 0px; " >
+      <div class="row">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+          <div class="position-sticky pt-3">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link d-flex justify-content-between" aria-current="page" href="./index/index.html" id="hrefindex">
+                  <div class="col-2">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                  </div>
+                  <div class="col-10 ">
+                    INICIO
+                  </div>
+                </a>
+              </li>
+            </ul>
+            <ul class="nav flex-column mb-2">
+              <li class="nav-item">
+                <a class="nav-link d-flex justify-content-between" href="./viajes/crear.html">
+                  <div class="col-2">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+                  </div>
+                  <div class="col-10 ">
+                    VIAJES
+                  </div>
+                </a>
+              </li>
+              <li class="nav-item ">
+                <a class="nav-link d-flex justify-content-between" href="./reportes/index.html"  >
+                  <div class="col-2">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg></div>
+                  <div class="col-10 ">
+                    REPOSTES
+                  </div>
+                </a>
+              </li>
+            </ul>
+            <!--
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>Herramientas</span>
+              <a class="link-secondary" href="#" aria-label="Add a new report">
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+              </a>
+            </h6>
+            <ul class="nav flex-column mb-2">
+              <li class="nav-item ">
+                <a class="nav-link d-flex justify-content-between" >
+                  <div class="col-2">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1"><circle cx="12" cy="5" r="3"></circle><line x1="12" y1="22" x2="12" y2="8"></line><path d="M5 12H2a10 10 0 0 0 20 0h-3"></path></svg></div>
+                  <div class="col-10 ">
+                    BOTE
+                  </div>
+                </a>
+              </li>
+            </ul>
+            -->
+          </div>
+        </nav>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 p-2" style="background: #fff;">
+          <div class="d-flex justify-content-end">
+            <div class="btn-toolbar mb-2 mb-md-0 mr-4" >
+
+              <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                  <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                  <li><a class="dropdown-item" href="./bote/index.html">Bote</a></li>
+                  <li><a class="dropdown-item" href="./carnada/index.html">Carnada</a></li>
+                  <li><a class="dropdown-item" href="./zona/index.html">Zona</a></li>
+                </ul>
+              </div>
+
+
+
+
+            </div>
+          </div>
+        </main>
+    
+        <main class="col-md-9 ms-sm-auto col-lg-10" >
+
+          
+
+          <!--<div class="p-2 mb-4" id="body" style="background-image: url('./src/img/fondo.png');background-repeat: no-repeat;background-size: cover;">-->
+          <div class="p-2 mb-4 mt-4 col-12" id="body" >
+
+          </div>
+
+
+
+        </main>
+      </div>
+    </div>
+
+
+    <script src="./src/js/main.js"></script>
+    <script src="../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    
+
+
+
+
+    
+   
+     
+</body>
+</html>

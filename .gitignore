@@ -1,0 +1,7 @@
+sistema_pesquero.db
+.env
+node_modules
+out/
+*.db
+package-lock.json
+build/sistema

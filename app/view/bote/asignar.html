@@ -1,0 +1,177 @@
+
+
+<div class="row d-flex justify-content-center">
+  <div class="col-10 mb-4">
+      <div class="card">
+
+          
+          <!--Menu a compartir-->
+          <div class="mb-4">
+              <ul class="nav nav-tabs bg-primary " >
+                  <li class="nav-item ">
+                    <a class="nav-link text-white " aria-current="page" href="./bote/index.html">Lista</a>
+                  </li>
+                  <li class="nav-item text-white">
+                    <a class="nav-link text-white" href="./bote/asignar.html">Asignar</a>
+                  </li>
+                </ul>
+          </div>
+          <!--Fin menú a compartir-->
+
+
+          <div class="card-body">
+            <h5>Seleccione un Bote:</h5>
+            <table class="table table-bordered">
+              <thead>
+                <tr >
+                  <th>Número</th>
+                  <th>Descripción</th>
+                </tr>
+              </thead>
+              <tbody id="tbody">
+              </tbody>
+            </table>
+          </div>
+
+
+      </div>
+
+  </div>
+
+
+
+
+  <div class="col-10" id="bote" style="display: none;padding-bottom: 40px;">
+    <div class="card">
+
+      <!--Menu a compartir-->
+      <div class="mb-4 bg-primary p-2">
+        <h5 class="text-white " id="bote_titulo">Bote</h5>
+      </div>
+      <!--Fin menú a compartir-->
+
+
+      <div class="card-body">
+
+        <p>A continuación seleccione la subsistema a la cual va a asignar este bote.</p>
+
+        <div class="mb-3 row">
+          <label for="staticEmail" class="col-sm-2 col-form-label">Subsistema</label>
+          <div class="col-sm-10">
+            <select id="subsistema" class="form form-control">
+              <option value="">Seleccione...</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <label for="staticEmail" class="col-sm-2 col-form-label">Fecha Termino</label>
+          <div class="col-sm-10">
+            <input type="date" class="form form-control" id="fecha_termino">
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end">
+          <button class="btn btn-primary" onclick="guardar()">Asignar</button>
+        </div>
+        
+
+
+        
+
+      </div>
+
+          
+    </div>
+
+  </div>
+  
+</div>
+
+<script>
+
+
+
+  const {ipcRenderer} = require('electron')
+
+  let barco=null;
+  let barcos=[];
+  let subsistemas=[];
+  
+  ipcRenderer.send('all:bote')
+  
+  ipcRenderer.on('all:bote:response',(e,args)=>{
+    const  data=JSON.parse(args)
+    barcos=data;
+    
+    //console.log(data)
+    for (let i = 0; i < data.length; i++) {
+
+      let tr="";
+      tr+="<tr class=\"hover\" onclick=\"seleccionar("+data[i].numero+")\"   >";
+      tr+="<td>"+data[i].numero+"</td>";
+      tr+="<td>"+data[i].descripcion+"</td>";
+      tr+="</tr>";
+
+      $('#tbody').append($(tr))
+
+     
+    
+    }
+
+    $('.table').DataTable();
+    
+  })
+
+  function seleccionar(numero){
+    for (let b = 0; b < barcos.length; b++) {
+      if(barcos[b].numero==numero){
+        barco=barcos[b];
+      }
+    }
+
+    if(subsistemas.length==0){
+      ipcRenderer.send('all:subsistema')
+      
+      ipcRenderer.on('all:subsistema:response',(e,args)=>{
+        subsistemas=JSON.parse(args)
+        //console.log(subsistemas)
+        for (let i = 0; i < subsistemas.length; i++) {
+          $('#subsistema').append('<option value="'+subsistemas[i].codigo+'">'+subsistemas[i].descripcion+'</option>')
+        }
+      })
+    }
+
+    $("#bote").show()
+    $("#bote_titulo").text(barco.descripcion+" - N°"+barco.numero)
+
+    
+   
+    
+
+    
+    
+
+  }
+
+  BoteVigencia = require('../model/bote_vigencia')
+
+  function guardar(){
+
+    
+    let fecha = $("#fecha_termino").val()
+    let subsistema = $("#subsistema").val()
+
+
+    var bote_vigencia = new BoteVigencia(barco.numero,subsistema,fecha); 
+
+    console.log(bote_vigencia.calcArea())
+  }
+
+  
+  
+
+</script>
+
+
+
