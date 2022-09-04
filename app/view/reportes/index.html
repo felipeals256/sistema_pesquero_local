@@ -60,7 +60,8 @@ function subir(){
             "method": "POST",
             "timeout": 0,
             "headers": {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "x-api-key": `${process.env.TOKEN}`
             },
             "data": JSON.stringify(data)
         };

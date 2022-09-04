@@ -7,7 +7,9 @@ function get(name,pk=""){
     var conf = {
         method: 'get',
         url: `${process.env.API_HOST}${name}/${pk}`,
-        headers: { },
+        headers: {
+            "x-api-key": `${process.env.TOKEN}`
+        },
         data : data
     };
 
