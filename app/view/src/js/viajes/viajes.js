@@ -9,7 +9,7 @@ $(document).ready(
 )
 
 function cambio_especie(){
-
+  
   especie = $("#especie option:selected" ).text()
   if( especie.trim().toLowerCase().search("langosta")==-1 &&  especie.trim().toLowerCase().search("cangrejo")==-1   ){
     $("input[name=n_trampas_agua]").val("")
@@ -17,8 +17,8 @@ function cambio_especie(){
     $("input[name=n_trampas_visitadas]").val("")
     $("input[name=n_trampas_visitadas]").prop( "disabled", true );
     $(".trampas").remove()
-    
   }else{
+    
     $("input[name=n_trampas_agua]").prop( "disabled", false );
     $("input[name=n_trampas_visitadas]").prop( "disabled", false );
   }
@@ -81,7 +81,7 @@ ipcRenderer.on('all:especie:response',(e,args)=>{
     const  especie=JSON.parse(args)
     //console.log(especie)
     for (let i = 0; i < especie.length; i++) {
-    $('#especie').append('<option value="'+especie[i].id+'"   '+(especie[i].defecto?"selected=\"\"":"")+'  >'+especie[i].nombre+'</option>')
+      $('#especie').append('<option value="'+especie[i].id+'"   '+(especie[i].defecto?"selected=\"\"":"")+'  >'+especie[i].nombre+'</option>')
     }
     cambio_especie()
 })
@@ -172,7 +172,7 @@ function sectores_agregar_datos(trampa_historico=null){
       $(".sector").append('<option value="">Seleccione...</option>')
       $(".sector").append('<option value="otro">Otro Sector</option>')
       for (let i = 0; i < sectores.length; i++) {
-          $(".sector").append('<option value="'+sectores[i].id+'">'+sectores[i].nombre+' ['+sectores[i].mt_zona_descripcion+']</option>')
+          $(".sector").append('<option data-zona_id="'+sectores[i].mt_zona_id+'" value="'+sectores[i].id+'">'+sectores[i].nombre+' ['+sectores[i].mt_zona_descripcion+']</option>')
       }
 
       
@@ -184,9 +184,10 @@ function sectores_agregar_datos(trampa_historico=null){
       if(trampa_historico){
           for (let i = 0; i < trampa_historico.length; i++) {
               const trampa = trampa_historico[i];
+              
               if(trampa.mt_sector_id){
-                  $($(".trampas")[i]).find('.select2-selection__rendered').text(trampa.sector)//es el texto del del select del sector
-                  $($(".trampas")[i]).find("[name=mt_sector_id] option[value="+( trampa.mt_sector_id?trampa.mt_sector_id:'')+"]").attr("selected",true);
+                  $($(".trampas")[i]).find('.select2-selection__rendered').text(trampa.sector+' ['+trampa.mt_zona_descripcion+']')//es el texto del del select del sector
+                  $($(".trampas")[i]).find("[name=mt_sector_id] option[value="+( trampa.mt_sector_id?trampa.mt_sector_id:'')+"][data-zona_id="+( trampa.mt_zona_id?trampa.mt_zona_id:'undefine')+"]").attr("selected",true);
               }else{
                   $($(".trampas")[i]).find('.select2-selection__rendered').text("Otro Sector")
                   $($(".trampas")[i]).find("[name=mt_sector_id] option[value=otro]").attr("selected",true);

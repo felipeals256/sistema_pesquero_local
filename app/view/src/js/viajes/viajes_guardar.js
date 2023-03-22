@@ -114,6 +114,7 @@ function viajes_guardar(){
         trampa_historico=new TrampaHistorico()
         trampa_historico.viaje_id=viaje.id
         trampa_historico.mt_sector_id=!_empty($($($(this).find("[name=mt_sector_id]"))[0]).val())?$($($(this).find("[name=mt_sector_id]"))[0]).val():null
+        trampa_historico.mt_zona_id=!_empty($($($(this).find("[name=mt_sector_id] option:selected"))[0]).data("zona_id"))?$($($(this).find("[name=mt_sector_id] option:selected"))[0]).data("zona_id"):null
         trampa_historico.otro_sector=!_empty($($($(this).find("[name=otro_sector]"))[0]).val())?$($($(this).find("[name=otro_sector]"))[0]).val():null
         trampa_historico.ventana_escape=!_empty($($($(this).find("[name=ventana_escape]"))[0]).val())?$($($(this).find("[name=ventana_escape]"))[0]).val():null
         trampa_historico.num_comercial=!_empty($($($(this).find("[name=num_comercial]"))[0]).val())?$($($(this).find("[name=num_comercial]"))[0]).val().trim():null
@@ -307,6 +308,7 @@ function modificar(){
             //console.log(JSON.parse(viaje_guardado).trampa_historico)
             trampas_ntrampas(JSON.parse(viaje_guardado).trampa_historico)
             $($("[name=mt_especie_id]")[0]).val(JSON.parse(viaje_guardado).mt_especie_id)
+            cambio_especie()
             $($("[name=comentario]")[0]).val(JSON.parse(viaje_guardado).comentario)
 
             $(".carnadas_padre").remove();

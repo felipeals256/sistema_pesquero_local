@@ -128,8 +128,9 @@ ipcMain.on('all_info:viaje',async(e,args)=>{
             }
         }
         viaje.trampa_historico=[]
-        let trampa_historico = await conexion.knex('trampa_historico').select('trampa_historico.*','mt_sector.nombre as sector','mt_especie.nombre as bycatch_nombre','mt_especie.id as bycatch_id')
+        let trampa_historico = await conexion.knex('trampa_historico').select('trampa_historico.*','mt_sector.nombre as sector','mt_especie.nombre as bycatch_nombre','mt_especie.id as bycatch_id','mt_zona.descripcion as mt_zona_descripcion')
                                                 .leftJoin('mt_sector','mt_sector.id','trampa_historico.mt_sector_id')
+                                                .leftJoin('mt_zona','mt_zona.id','trampa_historico.mt_zona_id')
                                                 .leftJoin('mt_especie','mt_especie.id','trampa_historico.bycatch_id')
                                                 .where('viaje_id',viaje.id)
                                                 .havingNull('trampa_historico.deleted_at')
