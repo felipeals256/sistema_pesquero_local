@@ -11,6 +11,7 @@ const zona              = require("../../controller/cargar/master/zona")
 const bote_vigencia     = require("../../controller/cargar/bote_vigencia")
 const user_type         = require("../../controller/cargar/user_type")
 const user              = require("../../controller/cargar/user")
+const UpdateAll        = require('../../model/update_all');
 
 function initConfig(){
 
@@ -41,18 +42,79 @@ function initConfig(){
 }
 
 function poblar(){
-    bote.poblar();
-    arte.poblar();
-    especie.poblar();
-    especie_tipo.poblar();
-    subsistema.poblar();
-    sector.poblar();
-    unidad.poblar();
-    zona.poblar();
+    object=new UpdateAll()
+    conexion.knex.select('*').from('config').where('codigo', 'update_bdd').then(
+        (config) =>{
+            if(config.length==0){
+                conexion.knex('config').insert(object).then(
+                    (resp)=>{
+                        update_all_reg();
+                    }
+                );
+            }else{
+                conexion.knex('config').where('codigo', object.codigo).update( object ).then(
+                    (resp)=>{
+                        update_all_reg();
+                    }
+                );
+            }
+        }
+    )
+    /*
+    if(config.length==0){
+        int=await conexion.knex.knex('config').insert({
+            codigo:'update_bdd',
+            p_value:'finish',
+            s_value:null,
+            t_value:null,
+        });
+    }
+    */
+    /*
+    config = await knex('config').insert({
+        codigo:'update_bdd',
+        p_value:'finish',
+        s_value:null,
+        t_value:null,
+    });
+    */
+    /*
+    
+    */
+  
+    //especie.poblar();
+    //especie_tipo.poblar();
+    //subsistema.poblar();
+    //sector.poblar();
+    //unidad.poblar();
+    //zona.poblar();
+    //bote_vigencia.poblar();
+    //user_type.poblar();
+    //user.poblar();
+}
 
-    bote_vigencia.poblar();
-    user_type.poblar();
-    user.poblar();
+function update_all_reg(){
+    bote.poblar(function(){arte.poblar(
+        function(){especie.poblar(
+            function(){especie_tipo.poblar(
+                function(){subsistema.poblar(
+                    function(){sector.poblar(
+                        function(){unidad.poblar(
+                            function(){zona.poblar(
+                                function(){bote_vigencia.poblar(
+                                    function(){user_type.poblar(
+                                        function(){user.poblar(
+                                            null,true
+                                        )},false
+                                    )},false
+                                )},false
+                            )},false
+                        )},false
+                    )},false
+                )},false
+            )},false
+        )},false
+    )},false);
 }
 
 

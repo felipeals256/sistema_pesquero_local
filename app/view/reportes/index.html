@@ -164,6 +164,10 @@ function getHTML(viaje){
                         <td>${(viaje.especie?viaje.especie.nombre:'')}</td>
                     </tr>
                     <tr>
+                        <td style="width:30%"><b>Total capturados:</b></td>
+                        <td>${(viaje.especie?viaje.total_capturado:'')}</td>
+                    </tr>
+                    <tr>
                         <td style="width:30%"><b>Comentario:</b></td>
                         <td>${(viaje.comentario?viaje.comentario:'')}</td>
                     </tr>
@@ -249,7 +253,6 @@ function getHTML(viaje){
     return html;
 }
 
-const {ipcRenderer} = require('electron')
 
     ipcRenderer.send('all:viaje')
     

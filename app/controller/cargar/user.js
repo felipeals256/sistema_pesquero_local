@@ -1,21 +1,21 @@
 const conexion  = require('../../env/bdd')
 const API       = require('../../env/controller/api');
 const {newDate}  = require('../../env/utility')
-
+const UpdateAll        = require('../../model/update_all');
 //valores
 // tabla    :   bote_vigencia
 // modelo   :   bote_vigencia
 
 
-function poblar(){
+function poblar(fuctions,ultimo_registro){
 
 
         
-    cargar();
+    cargar(fuctions,ultimo_registro);
  
 }
 
-function cargar(){
+function cargar(fuctions,ultimo_registro){
     
     API.get("/v1/user")
     .then( async function (response) {
@@ -47,9 +47,22 @@ function cargar(){
             }
             
         }
+
+        if(fuctions){
+            fuctions()
+        }
+
+        if(ultimo_registro){
+            object=new UpdateAll()
+            object.p_value=object.getFinish()
+            conexion.knex('config').where('codigo', object.codigo).update( object ).then((resp)=>{})
+        }
     })
     .catch(function (error) {
         console.log("Sin conexión o problema con la API user.");
+        object=new UpdateAll()
+        object.p_value=object.getFinish()
+        conexion.knex('config').where('codigo', object.codigo).update( object ).then((resp)=>{})
     });
 
 

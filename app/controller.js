@@ -8,4 +8,5 @@ require('./controller/sector.controller')
 require('./controller/viaje.controller')
 require('./controller/carnada_registro.controller')
 require('./controller/trampa_historico')
+require('./controller/update_all.controller')
 

@@ -25,29 +25,29 @@ function iniciar(){
 
 
         
-}
-
-async function  iniciar_migracion (){
-    const fs = require('fs')
-    const dir = __dirname+"/../../migrations"
-    const files = fs.readdirSync(dir)
-
-    const path = require('path')
-
-
-    for (const file of files) {
-        let config = await conexion.knex.select('nombre').from('migraciones').where('nombre',file);
-
-        if(config.length==0){
-
-            migracion = require('./../../migrations/'+(file))
-
-            config = await conexion.knex('migraciones').insert({nombre:file})
-        }
-        
-
     }
-}
+
+    async function  iniciar_migracion (){
+        const fs = require('fs')
+        const dir = __dirname+"/../../migrations"
+        const files = fs.readdirSync(dir)
+
+        const path = require('path')
+
+
+        for (const file of files) {
+            let config = await conexion.knex.select('nombre').from('migraciones').where('nombre',file);
+
+            if(config.length==0){
+
+                migracion = require('./../../migrations/'+(file))
+
+                config = await conexion.knex('migraciones').insert({nombre:file})
+            }
+            
+
+        }
+    }
 }
 
 module.exports={

@@ -1,6 +1,19 @@
 
 var zonas=[]
 
+//Limitar el número de langostas a número enteros y positivos.
+function cambio_cantidad(element){
+    
+    if( $("#especie option:selected" ).text().trim().toLowerCase().search("langosta")>-1 ){
+        let reg = /\D/g
+        const str =  $(element).val().trim()
+        const newStr = str.replace(reg, "");
+
+        $(element).val(newStr)
+    }
+    
+}
+
 function htmlTrampas(numero=0){return `
     <div class="trampas card p-3 mb-4">
 
@@ -19,13 +32,13 @@ function htmlTrampas(numero=0){return `
         <div class="mb-3 row">
             <label for="staticEmail" class="col-sm-2 col-form-label">N° Comercial</label>
             <div class="col-sm-10">
-                <input class="form form-control" type="text" name="num_comercial" value="">
+                <input class="form form-control" type="text" name="num_comercial" value="" onchange="cambio_cantidad(this)">
             </div>
         </div>
         <div class="mb-3 row">
             <label for="staticEmail" class="col-sm-2 col-form-label">N° No Comercial</label>
             <div class="col-sm-10">
-                <input class="form form-control" type="text" name="num_no_comercial" value="">
+                <input class="form form-control" type="text" name="num_no_comercial" value="" onchange="cambio_cantidad(this)">
             </div>
         </div>
         <div class="mb-3 row">
@@ -100,6 +113,8 @@ function trampas_ntrampas(trampa_historico=null){
         for (let i = 0; i < valor; i++) {
             $("#trampas").append(htmlTrampas(i+1))
         }
+
+        
         
         sectores_agregar_datos(trampa_historico)
         bycatch_agregar_datos()

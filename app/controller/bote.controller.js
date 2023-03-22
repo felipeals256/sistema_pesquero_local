@@ -40,7 +40,7 @@ ipcMain.on('all:bote',async(e,args)=>{
 
                         ,"bote_vigencia.fecha_termino"
                         )
-                .orderBy('mt_bote.matricula', 'desc');
+                .orderBy('mt_bote.matricula', 'asc');
 
     //console.log(data)
     if(data){
@@ -61,7 +61,7 @@ ipcMain.on('find:subsistema_bote',async(e,args)=>{
                 
                 .whereRaw(" ( bote_vigencia.fecha_termino >= date('now') or bote_vigencia.fecha_termino is null )" )
                 .andWhere('mt_subsistema.id',args)
-                .orderBy('mt_bote.matricula', 'desc');
+                .orderBy('mt_bote.matricula', 'asc');
 
     //console.log(data)
     if(data){

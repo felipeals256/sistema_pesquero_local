@@ -5,6 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,
     initial-scale=1.0">
+
+    <script>
+      const {ipcRenderer} = require('electron')
+    </script>
+
     <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.css">
     
     
@@ -17,6 +22,10 @@
     
     
     <script>
+
+      
+
+
       window.jQuery = window.$ = window.jquery = require('jquery');
       window.dt = require('datatables.net')();
       require('select2')(jQuery);
@@ -122,7 +131,13 @@
         </nav>
 
         <main class="col-md-9 ms-sm-auto col-lg-10 p-2" style="background: #fff;">
-          <div class="d-flex justify-content-end">
+          <div class="d-flex justify-content-between">
+            <div></div>
+            <div>
+              <div style="display:none;" id="alert_update_bdd" class="alert alert-primary" role="alert">
+                <img width="30px" src="./src/img/loading.gif" alt="">  Actualizando base de datos, le recomendamos que espere a que este proceso termine 
+              </div>
+            </div>
             <div class="btn-toolbar mb-2 mb-md-0 mr-4" >
 
               <div class="dropdown">
@@ -164,7 +179,41 @@
     <script src="../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
 
+   <script>
     
+
+
+    intentos_permitidos=600//esperamos 10 minutos esta variable indica la cantidad de validaciones cada 2 segundos
+    intentos_realizados=0
+ 
+    $(document).ready(
+      function(){
+        ipcRenderer.send('get:update_all', null)
+       
+        ipcRenderer.on('get:update_all:response',(e,args)=>{
+          //console.log("preguntando...."+intentos_realizados)
+          intentos_realizados+=1
+          args=JSON.parse(args)
+          if(!args)return;
+          if(args.p_value=='init'){
+            //if(args.p_value=='finish'){
+            $("#alert_update_bdd").show()
+            preguntar()
+          }else{
+            $("#alert_update_bdd").hide()
+          }
+        })
+      }
+    )
+
+    function preguntar(){
+      if(intentos_realizados==intentos_permitidos)return
+      setTimeout(function(){
+        ipcRenderer.send('get:update_all', null)
+      }, 2000);
+    }
+      
+   </script>
 
 
 

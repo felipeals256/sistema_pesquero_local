@@ -1,4 +1,30 @@
-const {ipcRenderer} = require('electron')
+$(document).ready(
+  function(){
+    $("#especie").change(
+      function(){
+        cambio_especie()
+      }
+    )
+  }
+)
+
+function cambio_especie(){
+
+  especie = $("#especie option:selected" ).text()
+  if( especie.trim().toLowerCase().search("langosta")==-1 &&  especie.trim().toLowerCase().search("cangrejo")==-1   ){
+    $("input[name=n_trampas_agua]").val("")
+    $("input[name=n_trampas_agua]").prop( "disabled", true );
+    $("input[name=n_trampas_visitadas]").val("")
+    $("input[name=n_trampas_visitadas]").prop( "disabled", true );
+    $(".trampas").remove()
+    
+  }else{
+    $("input[name=n_trampas_agua]").prop( "disabled", false );
+    $("input[name=n_trampas_visitadas]").prop( "disabled", false );
+  }
+}
+
+
 
 function viajes_cambiar(vista,elemento){
 
@@ -33,6 +59,8 @@ function viajes_cambiar(vista,elemento){
 
 
 
+
+
 var botes=[]
 
 
@@ -44,6 +72,7 @@ ipcRenderer.on('all:subsistema:response',(e,args)=>{
     for (let i = 0; i < subsistemas.length; i++) {
       $('#subsistema').append('<option data-object="'+_codificar(subsistemas[i])+'" value="'+subsistemas[i].id+'">'+subsistemas[i].codigo+" - "+subsistemas[i].descripcion+'</option>')
     }
+    
 })
 
 //especies
@@ -54,6 +83,7 @@ ipcRenderer.on('all:especie:response',(e,args)=>{
     for (let i = 0; i < especie.length; i++) {
     $('#especie').append('<option value="'+especie[i].id+'"   '+(especie[i].defecto?"selected=\"\"":"")+'  >'+especie[i].nombre+'</option>')
     }
+    cambio_especie()
 })
 
 //bycatch
@@ -124,7 +154,7 @@ function viajes_cambioFecha(elemento){
 function sectores_agregar_datos(trampa_historico=null){
 
   subsistema=_getDecodificarOption("#subsistema","object")
-
+  if(!subsistema)return
   
   ipcRenderer.send('all:sector',{subsistema_id:subsistema.id})
   ipcRenderer.on('all:sector:response',(e,args)=>{

@@ -10,6 +10,7 @@ class Viaje {
     n_trampas_agua=null
     n_trampas_visitadas=null
     mt_especie_id=null
+    total_capturado=null
     comentario=null
     finalizado=false
     enviado=false

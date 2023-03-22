@@ -76,7 +76,6 @@ function carnadas_add(carnada=null){
     $(div).find(".carnadas_carnada").select2();
 
     if(carnada){
-      console.log(carnada)
       if(carnada.mt_especie_id){
         $(div).find('.select2-selection__rendered').text(carnada.carnada_codigo+" - "+carnada.carnada_nombre)
         $(div).find("[name=carnada_mt_especie_id] option[especie_id="+( carnada.mt_especie_id?carnada.mt_especie_id:'')+"]").attr("selected",true);
