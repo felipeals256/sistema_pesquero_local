@@ -52,11 +52,18 @@ function poblar(){
                     }
                 );
             }else{
-                conexion.knex('config').where('codigo', object.codigo).update( object ).then(
-                    (resp)=>{
-                        update_all_reg();
-                    }
-                );
+                object.p_value=object.getFinish()
+                //Primero terminamos algun proceso anterior
+                conexion.knex('config').where('codigo', object.codigo).update( object ).then((resp)=>{
+                    //luego iniciamos uno nuevo
+                    object=new UpdateAll()
+                    conexion.knex('config').where('codigo', object.codigo).update( object ).then(
+                        (resp)=>{
+                            update_all_reg();
+                        }
+                    );
+                })
+                
             }
         }
     )

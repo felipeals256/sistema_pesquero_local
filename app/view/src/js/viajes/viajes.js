@@ -172,7 +172,7 @@ function sectores_agregar_datos(trampa_historico=null){
       $(".sector").append('<option value="">Seleccione...</option>')
       $(".sector").append('<option value="otro">Otro Sector</option>')
       for (let i = 0; i < sectores.length; i++) {
-          $(".sector").append('<option value="'+sectores[i].id+'">'+sectores[i].nombre+'</option>')
+          $(".sector").append('<option value="'+sectores[i].id+'">'+sectores[i].nombre+' ['+sectores[i].mt_zona_descripcion+']</option>')
       }
 
       

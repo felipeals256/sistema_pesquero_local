@@ -7,11 +7,12 @@ ipcMain.on('all:sector',async(e,args)=>{
     //si en los argumentos viene el id del subsistema, entonces retornamos solo los registros asociados a ese subsistema
     let data = []
     if(args.subsistema_id){
-        data = await conexion.knex.select(' mt_sector.*').distinct(' mt_sector.nombre')
+        data = await conexion.knex.select(' mt_sector.*','mt_zona.id as mt_zona_id','mt_zona.codigo as mt_zona_codigo','mt_zona.descripcion as mt_zona_descripcion')
                 //.leftJoin('mt_subsistema_mt_zona', 'mt_subsistema_mt_zona.sector_id', 'mt_sector.nombre')
                 .from('mt_sector')
                 .leftJoin('mt_zona_mt_sector', 'mt_zona_mt_sector.mt_sector_id', 'mt_sector.id')
                 .leftJoin('mt_subsistema_mt_zona', 'mt_subsistema_mt_zona.mt_zona_id', 'mt_zona_mt_sector.mt_zona_id')
+                .leftJoin('mt_zona', 'mt_zona_mt_sector.mt_zona_id', 'mt_zona.id')
                 .where('mt_subsistema_mt_zona.mt_subsistema_id', args.subsistema_id)
                 .orderBy('mt_sector.nombre');
 
