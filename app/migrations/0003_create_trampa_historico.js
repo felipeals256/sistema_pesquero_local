@@ -10,6 +10,7 @@ conexion.knex.schema.hasTable("trampa_historico").then( async ifExist => {
                     table.increments('id').primary();
                     table.string('viaje_id')
                     table.integer('mt_sector_id')
+                    table.integer('mt_zona_id');
                     table.string('otro_sector')
                     table.boolean('ventana_escape')
                     table.integer('num_comercial')
