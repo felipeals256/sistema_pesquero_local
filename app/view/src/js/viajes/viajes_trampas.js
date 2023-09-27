@@ -11,6 +11,27 @@ function cambio_cantidad(element){
 
         $(element).val(newStr)
     }
+
+    suma = 0
+    $("input[name=num_comercial]").each(function(){
+        let value = $(this).val()!=undefined?$(this).val():0
+        try {
+            suma+=Number.parseInt(value)
+        } catch (error) {
+            suma+=0
+        }
+    })
+
+    $("input[name=num_no_comercial]").each(function(){
+        let value = $(this).val()!=undefined?$(this).val():0
+        try {
+            suma+=Number.parseInt(value)
+        } catch (error) {
+            suma+=0
+        }
+    })
+
+    $($("[name=total_capturado]")[0]).val(suma)
     
 }
 
