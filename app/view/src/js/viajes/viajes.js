@@ -9,7 +9,7 @@ $(document).ready(
 )
 
 function cambio_especie(){
-  
+  $("#total_capturado").parent().parent().hide();
   especie = $("#especie option:selected" ).text()
   if( especie.trim().toLowerCase().search("langosta")==-1 &&  especie.trim().toLowerCase().search("cangrejo")==-1   ){
     $("input[name=n_trampas_agua]").val("")
@@ -17,8 +17,11 @@ function cambio_especie(){
     $("input[name=n_trampas_visitadas]").val("")
     $("input[name=n_trampas_visitadas]").prop( "disabled", true );
     $(".trampas").remove()
-  }else{
+
     
+
+  }else{
+    if( especie.trim().toLowerCase().search("langosta")!=-1)$("#total_capturado").parent().parent().show();
     $("input[name=n_trampas_agua]").prop( "disabled", false );
     $("input[name=n_trampas_visitadas]").prop( "disabled", false );
   }
